@@ -4,6 +4,13 @@ import usb.util
 class UsbPlot: 
     def __init__(self):
     
+
+
+
+
+#ADDING A CHANGE
+
+
     
         # find our device - Vendor ST, Product STM32F4
         self.usbDev = usb.core.find(idVendor=0x0483, idProduct=0xF00D)
