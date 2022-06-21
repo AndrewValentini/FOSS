@@ -9,7 +9,7 @@ class UsbPlot:
         self.usbDev = usb.core.find(idVendor=0x0483, idProduct=0xF00D)
         if self.usbDev is None:
             raise ValueError('Device not found')
-            
+            #This is a comment 
         # With no arguments, the first configuration will be the active one
         self.usbDev.set_configuration()
         
