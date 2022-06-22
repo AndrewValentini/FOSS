@@ -20,13 +20,9 @@ class usbLivePlot:
         self.epIn = self.findEndpoint(usb.util.ENDPOINT_IN)
 
 
-
         self.fig = plt.figure()
         self.ax1 = self.fig.add_subplot
         self.startTime = time.time()
-
-
-
 
 
         #Cretaing Buffers
@@ -50,7 +46,7 @@ class usbLivePlot:
         SensorStatus_bytes = usbData[ 17 : 19 ]
         DATA_bytes = usbData[ 20 : 43 ]
 
-        
+        #defining an array
         payloadsize = []
         TimeStamp = []
         PktCounter = []
@@ -62,15 +58,16 @@ class usbLivePlot:
 
         
         # Converting Byte arrays to integers, time is uint16 (this is not needed)
+        #convert the gators data into something usable (as seen in the TimeStamp) <--- I think this has been completed (had to get rid of self. though; ask Caleb if this will work)
         for i in range(self.datasize):
-            payloadsize.append(self.accel_byte2g(payloadsize_bytes[i]))
+            payloadsize.append(int.from_bytes(payloadsize_bytes[i]))
             #TimeStamp.append(self.accel_byte2g(TimeStamp_bytes[i]))
-            PktCounter.append(self.accel_byte2g(PktCounter_bytes[i]))
-            Type.append(self.accel_byte2g(Type_bytes[i]))
-            Version.append(self.accel_byte2g(Version_bytes[i]))
-            Sync.append(self.accel_byte2g(Sync_bytes[i]))
-            SensorStatus.append(self.accel_byte2g(SensorStatus_bytes[i]))
-            DATA.append(self.accel_byte2g(DATA_bytes[i]))
+            PktCounter.append(int.from_bytes(PktCounter_bytes[i]))
+            Type.append(int.from_bytes(Type_bytes[i]))
+            Version.append(int.from_bytes(Version_bytes[i]))
+            Sync.append(int.from_bytes(Sync_bytes[i]))
+            SensorStatus.append(int.from_bytes(SensorStatus_bytes[i]))
+            DATA.append(int.from_bytes(DATA_bytes[i]))
 
 
             
@@ -79,8 +76,8 @@ class usbLivePlot:
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
-
-
+    
+#---------QUESTION--------->Is it a problem that therer exists no 'i' in  this def line? I can just get rid of it...---------
     def animate(self, i):
         
         # Reading the USB    
