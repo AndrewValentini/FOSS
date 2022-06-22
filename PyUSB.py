@@ -1,7 +1,10 @@
 import usb.core
 import usb.util
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import time
 
-class UsbPlot: 
+class usbLivePlot: 
     def __init__(self):
 
 
@@ -16,6 +19,16 @@ class UsbPlot:
         # find and assign IN endpoint
         self.epIn = self.findEndpoint(usb.util.ENDPOINT_IN)
 
+
+
+        self.fig = plt.figure()
+        self.ax1 = self.fig.add_subplot
+        self.startTime = time.time()
+
+
+
+
+
         #Cretaing Buffers
         self.datasize = 43
         self.payloadsize_array = []
@@ -27,7 +40,7 @@ class UsbPlot:
         self.SensorStatus_array = []
         self.DATA_array = []
 
-    def bytesFromUsb(self, usbData):
+    def bytesFromusb(self, usbData):
         payloadsize_bytes = usbData[ 0 : 3 ]
         TimeStamp_bytes = usbData[ 4 : 7 ]
         PktCounter_bytes = usbData[ 8 : 9 ]
@@ -48,10 +61,10 @@ class UsbPlot:
         DATA = []
 
         
-        # Byte arrays to integers, time is uint16
+        # Converting Byte arrays to integers, time is uint16 (this is not needed)
         for i in range(self.datasize):
             payloadsize.append(self.accel_byte2g(payloadsize_bytes[i]))
-            TimeStamp.append(self.accel_byte2g(TimeStamp_bytes[i]))
+            #TimeStamp.append(self.accel_byte2g(TimeStamp_bytes[i]))
             PktCounter.append(self.accel_byte2g(PktCounter_bytes[i]))
             Type.append(self.accel_byte2g(Type_bytes[i]))
             Version.append(self.accel_byte2g(Version_bytes[i]))
@@ -61,20 +74,20 @@ class UsbPlot:
 
 
             
-            #t_tmp = int.from_bytes(tbytes[2*i:2*i+2], byteorder='little', signed=False)
-            #t.append(t_tmp/1000 + self.timeOverflow) # seconds
+            t_gator = int.from_bytes(TimeStamp_bytes[i], byteorder='little', signed=False)
+            TimeStamp.append(t_gator/1000000) # converting microseconds to seconds because data from Gator is collected in the former
         
-        return payloadsize, TimeStamp, PktCounter, Type, Version, Sync, SensorStatus, DATA # little endian transmission
+        return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
 
 
     def animate(self, i):
         
-        # Read USB    
+        # Reading the USB    
         timeout = 50
         try:
             usbData = self.usbDev.read(self.epIn.bEndpointAddress, 5*self.datasize, timeout)
-        except usb.core.USBError as e:
+        except usb.core.usbError as e:
             print('Data not read:', e)
             return
             
@@ -90,6 +103,13 @@ class UsbPlot:
         self.Sync_array.extend(Sync_buf)
         self.SensorStatus_array.extend(SensorStatus_buf)
         self.DATA_array.extend(DATA_buf)
+
+
+        self.ax1.clear()
+        self.ax1.plot(self.TimeStamp_array, self.DATA_array, marker = '.', linestyle = None)
+        self.ax1.set_title("Strain from Gator Versus Time")
+        self.ax1.set_xlabel("Time [s]")
+        self.ax1.set_ylabel("Strain from Gator [?]") 
         
 
     def findEndpoint(self, direction):
@@ -107,3 +127,16 @@ class UsbPlot:
         assert ep is not None
         print(ep)
         return ep
+    def main(): 
+
+        usbLive = usbLivePlot()
+        usbLive.filename = "strain.log"
+
+        #Creating a self-animating plot
+        ani = animation.FuncAnimation(usbLive.fig, usbLive.animate, interval = 30)
+        plt.show()
+
+    if __name__ == "__main__":
+        main()
+
+        
