@@ -1,9 +1,5 @@
 import usb.core
 import usb.util
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-#import matplotlib as mpl
-import time
 import csv
 
 class usbLivePlot: 
@@ -79,7 +75,7 @@ class usbLivePlot:
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
-     #---------TEST____------
+     
 
     #---------------------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time
     with open("FOSS.data", 'w', newline = '', sep = ',') as file:
@@ -145,14 +141,4 @@ class usbLivePlot:
         assert ep is not None
         print(ep)
         return ep
-    def main(): 
-
-        usbLive = usbLivePlot()
-        usbLive.filename = "strain.csv"
-
-        #Creating a self-animating plot
-        ani = animation.FuncAnimation(usbLive.fig, usbLive.animate, interval = 30)
-        plt.show()
-
-    if __name__ == "__main__":
-        main()
+    
