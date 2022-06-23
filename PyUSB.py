@@ -79,7 +79,7 @@ class usbLivePlot:
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
-     
+     #---------TEST____------
 
     #---------------------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time
     with open("FOSS.data", 'w', newline = '', sep = ',') as file:
