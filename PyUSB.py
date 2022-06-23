@@ -18,10 +18,6 @@ class usbLivePlot:
         self.epIn = self.findEndpoint(usb.util.ENDPOINT_IN)
 
 
-        self.fig = plt.figure()
-        self.ax1 = self.fig.add_subplot
-        self.startTime = time.time()
-
 
         #Cretaing Buffers
         self.datasize = 43
@@ -87,45 +83,7 @@ class usbLivePlot:
         for i in range(int(TIME),int(TIME)+5): 
             writer_object.writerow(['DATA', 'DATA' 'DATA', 'DATA'])
 
-
-
-
-
-
-
     
-#---------QUESTION--------->Is it a problem that therer exists no 'i' in  this def line? I can just get rid of it...---------
-    def animate(self, i):
-        
-        # Reading the USB    
-        timeout = 50
-        try:
-            usbData = self.usbDev.read(self.epIn.bEndpointAddress, 5*self.datasize, timeout)
-        except usb.core.usbError as e:
-            print('Data not read:', e)
-            return
-            
-        payloadsize_buf,TimeStamp_buf,PktCounter_buf, Type_buf, Version_buf, Sync_buf, SensorStatus_buf, DATA_buf, tMcu = self.bytesFromUsb(usbData)
-
-
-        #self.timear.extend(tMcu)
-        self.payloadsize_array.extend(payloadsize_buf)
-        self.TimeStamp_array.extend(TimeStamp_buf)
-        self.PktCounter_array.extend(PktCounter_buf)
-        self.Type_array.extend(Type_buf)
-        self.Version_array.extend(Version_buf)
-        self.Sync_array.extend(Sync_buf)
-        self.SensorStatus_array.extend(SensorStatus_buf)
-        self.DATA_array.extend(DATA_buf)
-
-
-        self.ax1.clear()
-        self.ax1.plot(self.TimeStamp_array, self.DATA_array, marker = '.', linestyle = None)
-        self.ax1.set_title("Strain from Gator Versus Time")
-        self.ax1.set_xlabel("Time [s]")
-        self.ax1.set_ylabel("Strain from Gator [?]") 
-        
-
     def findEndpoint(self, direction):
         cfg = self.usbDev.get_active_configuration()
         intf = cfg[(0,0)]
@@ -141,4 +99,17 @@ class usbLivePlot:
         assert ep is not None
         print(ep)
         return ep
+
+
+
+#-----------I feel like this part is important..You're adding the buffer data to the array set created. Isn't this needed regardless of if you create an animation?-
+        #self.payloadsize_array.extend(payloadsize_buf)
+        #self.TimeStamp_array.extend(TimeStamp_buf)
+        #self.PktCounter_array.extend(PktCounter_buf)
+        #self.Type_array.extend(Type_buf)
+        #self.Version_array.extend(Version_buf)
+        #self.Sync_array.extend(Sync_buf)
+        #self.SensorStatus_array.extend(SensorStatus_buf)
+        #self.DATA_array.extend(DATA_buf)
+
     
