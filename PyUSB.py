@@ -64,19 +64,13 @@ class usbLivePlot:
             global DATA_g
             data_gator = int.from_bytes(TimeStamp_bytes[i], byteorder ='little', signed = False)
             DATA_g = TimeStamp.append(data_gator)
-            t_gator = int.from_bytes(TimeStamp_bytes[i], byteorder='little', signed=False)
+            t_gator = int.from_bytes(TimeStamp_bytes[i], byteorder='little', signed = False)
             # converting microseconds to seconds because data from Gator is collected in the former
             global TIME
             TIME = TimeStamp.append(t_gator/1000000)
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
-
-#---------to use this equation, COG bits are inputs to the parentheses. Can I just divide by byte arrays by 8 to get bits to use here? 
-    wavelength = 1514 + () / ((2**18)*72)
-
-
-     
 
     #-----------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time--------Enter FBG_1, FBG_2, etc here
     with open("FOSS.data", 'w', newline = '', sep = ',') as file:
