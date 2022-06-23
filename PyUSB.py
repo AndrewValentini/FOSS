@@ -17,8 +17,6 @@ class usbLivePlot:
         # find and assign IN endpoint
         self.epIn = self.findEndpoint(usb.util.ENDPOINT_IN)
 
-
-
         #Cretaing Buffers
         self.datasize = 43
         self.payloadsize_array = []
@@ -61,27 +59,28 @@ class usbLivePlot:
             Version.append(int.from_bytes(Version_bytes[i]))
             Sync.append(int.from_bytes(Sync_bytes[i]))
             SensorStatus.append(int.from_bytes(SensorStatus_bytes[i]))
-            DATA.append(int.from_bytes(DATA_bytes[i]))
+            #DATA.append(int.from_bytes(DATA_bytes[i]))
 
-#----------------------------Is the TIME = TimeStamp.... allowed? Can I declare a varibale which is under a for i in range? ------------------------------------
-            
+            global DATA_g
+            data_gator = int.from_bytes(TimeStamp_bytes[i], byteorder ='little', signed = False)
+            DATA_g = TimeStamp.append(data_gator)
             t_gator = int.from_bytes(TimeStamp_bytes[i], byteorder='little', signed=False)
             # converting microseconds to seconds because data from Gator is collected in the former
+            global TIME
             TIME = TimeStamp.append(t_gator/1000000)
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
 
      
 
-    #---------------------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time
+    #-----------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time--------Enter FBG_1, FBG_2, etc here
     with open("FOSS.data", 'w', newline = '', sep = ',') as file:
 
         writer_object = csv.writer(file)
         writer_object.writerow(['FBG_sensor1', 'FBG_sensor2', 'FBG_sensor3', 'FBG_sensor4'])
         
-#----------------------------------------Why isn't TIME defined? I defined it above, didn't I?
         for i in range(int(TIME),int(TIME)+5): 
-            writer_object.writerow(['DATA', 'DATA' 'DATA', 'DATA'])
+            writer_object.writerow([DATA_g, DATA_g, DATA_g, DATA_g])
 
     
     def findEndpoint(self, direction):
