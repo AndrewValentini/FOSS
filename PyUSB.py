@@ -48,7 +48,7 @@ class usbLivePlot:
         SensorStatus = []
         DATA = []
 
-        
+                
         # Converting Byte arrays to integers, time is uint16 (this is not needed)
         #convert the gators data into something usable (as seen in the TimeStamp) <--- I think this has been completed (had to get rid of self. though; ask Caleb if this will work)
         for i in range(self.datasize):
@@ -70,6 +70,11 @@ class usbLivePlot:
             TIME = TimeStamp.append(t_gator/1000000)
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
+
+
+#---------to use this equation, COG bits are inputs to the parentheses. Can I just divide by byte arrays by 8 to get bits to use here? 
+    wavelength = 1514 + () / ((2**18)*72)
+
 
      
 
