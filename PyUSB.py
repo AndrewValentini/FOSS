@@ -2,7 +2,9 @@ import usb.core
 import usb.util
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+#import matplotlib as mpl
 import time
+import csv
 
 class usbLivePlot: 
     def __init__(self):
@@ -69,12 +71,31 @@ class usbLivePlot:
             SensorStatus.append(int.from_bytes(SensorStatus_bytes[i]))
             DATA.append(int.from_bytes(DATA_bytes[i]))
 
-
+#----------------------------Is the TIME = TimeStamp.... allowed? Can I declare a varibale which is under a for i in range? ------------------------------------
             
             t_gator = int.from_bytes(TimeStamp_bytes[i], byteorder='little', signed=False)
-            TimeStamp.append(t_gator/1000000) # converting microseconds to seconds because data from Gator is collected in the former
+            # converting microseconds to seconds because data from Gator is collected in the former
+            TIME = TimeStamp.append(t_gator/1000000)
         
         return payloadsize, PktCounter, Type, Version, Sync, SensorStatus, DATA, TimeStamp # little endian (LSB) transmission
+
+     
+
+    #---------------------------What should go in place of DATA? I would like this to be where the FBGs pick up the changes over time
+    with open("FOSS.data", 'w', newline = '', sep = ',') as file:
+
+        writer_object = csv.writer(file)
+        writer_object.writerow(['FBG_sensor1', 'FBG_sensor2', 'FBG_sensor3', 'FBG_sensor4'])
+        
+#----------------------------------------Why isn't TIME defined? I defined it above, didn't I?
+        for i in range(int(TIME),int(TIME)+5): 
+            writer_object.writerow(['DATA', 'DATA' 'DATA', 'DATA'])
+
+
+
+
+
+
 
     
 #---------QUESTION--------->Is it a problem that therer exists no 'i' in  this def line? I can just get rid of it...---------
@@ -127,7 +148,7 @@ class usbLivePlot:
     def main(): 
 
         usbLive = usbLivePlot()
-        usbLive.filename = "strain.log"
+        usbLive.filename = "strain.csv"
 
         #Creating a self-animating plot
         ani = animation.FuncAnimation(usbLive.fig, usbLive.animate, interval = 30)
@@ -135,5 +156,3 @@ class usbLivePlot:
 
     if __name__ == "__main__":
         main()
-
-        
